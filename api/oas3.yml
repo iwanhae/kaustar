@@ -1,0 +1,186 @@
+openapi: 3.0.2
+servers:
+  - url: /api/v1
+info:
+  version: 1.0.0
+  title: Kaustar API schema
+tags:
+  - name: admin
+    description: admin operations
+  - name: user
+    description: user operations
+security:
+  - basicAuth: []
+  - cookieAuth: []
+
+paths:
+  /whoami:
+    get:
+      operationId: whoami
+      tags: [user]
+      description: Get the current user
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "default":
+          $ref: "#/components/responses/ServerMessage"
+  /users:
+    get:
+      operationId: listUsers
+      tags: [user]
+      description: List users
+      parameters:
+        - name: limit
+          in: query
+          description: limit the number of returned items
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: offset
+          in: query
+          description: offset the returned items
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserList"
+        "default":
+          $ref: "#/components/responses/ServerMessage"
+    post:
+      operationId: createUser
+      tags: [admin]
+      description: Create a new user
+      requestBody:
+        description: Created user object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreateRequest"
+        required: true
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "default":
+          $ref: "#/components/responses/ServerMessage"
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: kaustar-token
+  responses:
+    ServerMessage:
+      description: Message from the server
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+  schemas:
+    Message:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: message from the server
+        error:
+          type: string
+          description: error reason
+    UserCreateRequest:
+      type: object
+      required:
+        - name
+        - group
+        - password
+      properties:
+        name:
+          type: string
+          example: John Doe
+        group:
+          type: array
+          items:
+            type: string
+          example:
+            - database-viewer
+            - qa-support
+          description: groups the user belongs to in RFC 1123 format
+        password:
+          type: string
+          example: pa$$word
+        description:
+          type: string
+          example: John Doe from the QA team
+    User:
+      type: object
+      required:
+        - uid
+        - name
+        - group
+      properties:
+        uid:
+          type: string
+          example: c7fbf904-f8a8-48ee-b45a-1cd9fe32e69a
+        name:
+          type: string
+          example: John Doe
+        group:
+          type: array
+          items:
+            type: string
+          example:
+            - database-viewer
+            - qa-support
+          description: groups the user belongs to in RFC 1123 format
+        description:
+          type: string
+          example: John Doe from the QA team
+    Pagination:
+      type: object
+      required:
+        - limit
+        - offset
+        - total
+      properties:
+        limit:
+          type: integer
+          example: 10
+        offset:
+          type: integer
+          example: 0
+        total:
+          type: integer
+          example: 1
+    UserList:
+      type: object
+      required:
+        - items
+        - pagination
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        pagination:
+          $ref: "#/components/schemas/Pagination"

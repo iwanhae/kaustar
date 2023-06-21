@@ -8,16 +8,18 @@ import (
 )
 
 // Load default config file from "default.yaml" and override it with environment variables
-func Load(cfgFile string) (config *Config, err error) {
+func Load(cfgFile string) (config Config, err error) {
 	v := viper.New()
 	v.SetConfigFile(cfgFile)
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
-	if err := v.ReadInConfig(); err != nil {
-		return nil, errors.Wrapf(err, "failed to read config file %q", cfgFile)
+	if err = v.ReadInConfig(); err != nil {
+		err = errors.Wrapf(err, "failed to read config file %q", cfgFile)
+		return
 	}
-	if err := v.Unmarshal(&config); err != nil {
-		return nil, err
+	if err = v.Unmarshal(&config); err != nil {
+		err = errors.Wrapf(err, "failed to unmarshal config file")
+		return
 	}
 	return
 }
