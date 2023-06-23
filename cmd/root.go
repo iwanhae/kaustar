@@ -40,6 +40,10 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	go func() {
+		fmt.Println("Starting kaustar controller")
+		runController()
+	}()
 	fmt.Println("Starting kaustar")
 	log.Fatal(e.Start(cfg.Server.Address))
 	return nil

@@ -7,6 +7,32 @@ rules:
 - apiGroups:
   - authentication.kaustar.github.io
   resources:
+  - tokens
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - authentication.kaustar.github.io
+  resources:
+  - tokens/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - authentication.kaustar.github.io
+  resources:
+  - tokens/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - authentication.kaustar.github.io
+  resources:
   - users
   verbs:
   - create

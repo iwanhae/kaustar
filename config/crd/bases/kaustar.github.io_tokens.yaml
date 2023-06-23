@@ -4,20 +4,20 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.12.0
-  name: users.kaustar.github.io
+  name: tokens.kaustar.github.io
 spec:
   group: kaustar.github.io
   names:
-    kind: User
-    listKind: UserList
-    plural: users
-    singular: user
+    kind: Token
+    listKind: TokenList
+    plural: tokens
+    singular: token
   scope: Cluster
   versions:
   - name: v1beta1
     schema:
       openAPIV3Schema:
-        description: User is the Schema for the users API
+        description: Token is the Schema for the tokens API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -32,15 +32,15 @@ spec:
           metadata:
             type: object
           spec:
-            description: UserSpec defines the desired state of User
+            description: TokenSpec defines the desired state of Token
             properties:
               foo:
-                description: Foo is an example field of User. Edit user_types.go to
-                  remove/update
+                description: Foo is an example field of Token. Edit token_types.go
+                  to remove/update
                 type: string
             type: object
           status:
-            description: UserStatus defines the observed state of User
+            description: TokenStatus defines the observed state of Token
             type: object
         type: object
     served: true

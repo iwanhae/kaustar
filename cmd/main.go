@@ -11,6 +11,8 @@ import (
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 
+	"github.com/rs/zerolog/log"
+
 	authenticationv1beta1 "github.com/iwanhae/kaustar/api/v1beta1"
 	"github.com/iwanhae/kaustar/internal/controller"
 	//+kubebuilder:scaffold:imports
@@ -27,38 +29,40 @@ func main() {
 }
 
 var (
-	scheme   = runtime.NewScheme()
-	setupLog = ctrl.Log.WithName("setup")
+	scheme = runtime.NewScheme()
 )
 
 func runController() {
+	logger := log.Logger.With().Str("phase", "setup").Logger()
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-		Scheme: scheme,
+		Scheme:                 scheme,
+		MetricsBindAddress:     "0",
+		HealthProbeBindAddress: "0",
 	})
 	if err != nil {
-		setupLog.Error(err, "unable to start manager")
+		logger.Err(err).Msg("unable to start manager")
 		os.Exit(1)
 	}
 
-	if err = (&controller.UserReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "User")
-		os.Exit(1)
-	}
 	if err = (&controller.TokenReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Token")
+		logger.Err(err).Msg("unable to create Token controller")
+		os.Exit(1)
+	}
+	if err = (&controller.UserReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		logger.Err(err).Msg("unable to create User controller")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder
 
-	setupLog.Info("starting manager")
+	logger.Info().Msg("starting manager")
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
-		setupLog.Error(err, "problem running manager")
+		logger.Err(err).Msg("problem running manager")
 		os.Exit(1)
 	}
 }

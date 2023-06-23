@@ -40,6 +40,7 @@ type UserStatus struct {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:scope=Cluster
 
 // User is the Schema for the users API
 type User struct {

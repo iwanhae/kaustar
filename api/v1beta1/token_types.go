@@ -40,6 +40,7 @@ type TokenStatus struct {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:scope=Cluster
 
 // Token is the Schema for the tokens API
 type Token struct {
