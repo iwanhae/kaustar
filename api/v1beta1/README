@@ -1,0 +1,3 @@
+To create an API
+
+kubebuilder create api --group authentication --version v1beta1 --kind Token --controller --force

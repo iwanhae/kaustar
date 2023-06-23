@@ -1,0 +1,12 @@
+apiVersion: authentication.kaustar.github.io/v1beta1
+kind: User
+metadata:
+  labels:
+    app.kubernetes.io/name: user
+    app.kubernetes.io/instance: user-sample
+    app.kubernetes.io/part-of: kaustar
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: kaustar
+  name: user-sample
+spec:
+  # TODO(user): Add fields here
